@@ -1,0 +1,28 @@
+{
+  "name": "mmo-bubbles",
+  "version": "0.0.1",
+  "description": "Simple MMO game using node and socket.io",
+  "main": "index.js",
+  "scripts": {
+    "start": "coffee server.coffee",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mach1/mmo-bubbles.git"
+  },
+  "keywords": [
+    "node",
+    "socket.io"
+  ],
+  "author": "Jaan Lambert",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mach1/mmo-bubbles/issues"
+  },
+  "homepage": "https://github.com/mach1/mmo-bubbles#readme",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.3.7"
+  }
+}
