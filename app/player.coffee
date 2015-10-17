@@ -1,3 +1,5 @@
+fabric = require('fabric').fabric
+
 class Player
 
   constructor: (@id, @coordinates) ->

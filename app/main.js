@@ -1,6 +1,7 @@
-var socket = io();
+var socket = require('socket.io-client')();
 var canvas;
 var Player = require('./player.coffee');
+var fabric = require('fabric').fabric;
 
 document.addEventListener('DOMContentLoaded', function() {
   canvas = new fabric.Canvas('c');
