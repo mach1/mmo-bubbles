@@ -2,15 +2,28 @@ express = require('express')
 app = express()
 http = require('http').Server(app)
 io = require('socket.io')(http)
+webpack = require 'webpack'
+webpackConfig = require('./webpack.config.js')
+webpackDevMiddleware = require 'webpack-dev-middleware'
+webpackHotMiddleware = require 'webpack-hot-middleware'
+
 
 Client = require './client.coffee'
 
 clients = []
 
-app.use(express.static('dist'))
+compiler = webpack(webpackConfig)
+app.use webpackDevMiddleware( compiler,
+  noInfo: true,
+  publicPath: webpackConfig.output.publicPath,
+  reload: true
+)
 
-app.get '/', (req, res) ->
-  res.sendfile 'dist/index.html'
+app.use webpackHotMiddleware( compiler,
+  log: console.log
+  path: '/__webpack_hmr'
+  hearthbeat: 10 * 1000
+)
 
 io.on 'connection', (socket) ->
   client = new Client(socket)
