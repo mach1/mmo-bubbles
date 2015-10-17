@@ -1,10 +1,13 @@
-app = require('express')()
+express = require('express')
+app = express()
 http = require('http').Server(app)
 io = require('socket.io')(http)
 
 Client = require './client.coffee'
 
 clients = []
+
+app.use(express.static('app'))
 
 app.get '/', (req, res) ->
   res.sendfile 'index.html'
