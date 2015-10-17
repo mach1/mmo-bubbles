@@ -7,10 +7,10 @@ Client = require './client.coffee'
 
 clients = []
 
-app.use(express.static('app'))
+app.use(express.static('dist'))
 
 app.get '/', (req, res) ->
-  res.sendfile 'index.html'
+  res.sendfile 'dist/index.html'
 
 io.on 'connection', (socket) ->
   client = new Client(socket)
