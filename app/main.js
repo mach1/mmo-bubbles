@@ -1,63 +1,46 @@
 var socket = require('socket.io-client')();
 var canvas;
 var Player = require('./player.coffee');
-var fabric = require('fabric').fabric;
+var PlayerActions = require('./actions/player-actions.coffee');
+var playerManager = require('./player-manager.coffee').instance();
+var graphicsManager = require('./graphics-manager.coffee').instance();
 
 document.addEventListener('DOMContentLoaded', function() {
-  canvas = new fabric.Canvas('c');
   var circle;
   var clients = [];
   var player;
-  canvas.setWidth(window.innerWidth);
-  canvas.setHeight(window.innerHeight);
+  var canvas = graphicsManager.getCanvas();
 
   socket.emit('client:getCoordinates');
 
-  socket.on('server:setCoordinates', function(coordinates) {
-    player = new Player(null, coordinates);
-    canvas.add(player.getDrawable());
-    canvas.renderAll();
+  socket.on('server:setCoordinates', function(data) {
+    PlayerActions.addPlayer(data.id, data.coordinates);
   });
 
   socket.on('server:new', function(data) {
-    var other = new Player(data.id, data.coordinates);
-    canvas.add(other.getDrawable());
-    canvas.renderAll();
-    clients.push(other);
+    PlayerActions.addOtherPlayer(data.id, data.coordinates);
   });
 
   socket.on('server:clients', function(clientsData) {
-    clientsData.forEach(function(data) {
-      var other = new Player(data.id, data.coordinates);
-
-      canvas.add(other.getDrawable());
-      clients.push(other);
-    });
-
-    canvas.renderAll();
+    PlayerActions.addOtherPlayers(clientsData);
   });
 
   socket.on('server:disconnected', function(id) {
-    clients.forEach(function(client) {
-      if (client.id === id) {
-        canvas.remove(client.getDrawable());
-        return;
-      }
-    });
+    PlayerActions.removePlayer(id);
   });
 
   socket.on('server:animate', function(data) {
-    clients.forEach(function(client) {
-      if (client.id === data.id) {
-        client.move(data.coordinates, canvas.renderAll.bind(canvas));
-        return;
-      }
-    });
+    PlayerActions.movePlayer(data.id, data.coordinates);
   });
 
   canvas.on('mouse:down', function(options) {
-    player.move({ top: options.e.clientY, left: options.e.clientX}, canvas.renderAll.bind(canvas));
-    socket.emit('client:animate', player.getCoordinates()); 
+    var coordinates = {
+      top: options.e.clientY,
+      left: options.e.clientX
+    };
+    var id = playerManager.getPlayer().id
+    PlayerActions.movePlayer(id, coordinates);
+    socket.emit('client:animate', coordinates);
   });
 });
 

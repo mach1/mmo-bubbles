@@ -31,7 +31,9 @@ io.on 'connection', (socket) ->
 
   socket.on 'client:getCoordinates', ->
     client.setCoordinates(Math.random() * 500, Math.random() * 500)
-    socket.emit 'server:setCoordinates', client.getCoordinates()
+    socket.emit 'server:setCoordinates',
+      coordinates: client.getCoordinates()
+      id: client.id
 
     clients.forEach (other) ->
       other.socket.emit 'server:new', client.getData() unless other is client

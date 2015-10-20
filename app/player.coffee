@@ -23,6 +23,8 @@ class Player
     @drawable.animate 'left', centerX,
       onChange: callback
 
+  setCoordinates: (@coordinates) ->
+
   getCoordinates: ->
     @coordinates
 
