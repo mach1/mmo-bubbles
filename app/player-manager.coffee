@@ -6,7 +6,7 @@ class PlayerManager extends EventEmitter
 
   constructor: ->
     Dispatcher.register @invokeOnDispatch
-    @others = []
+    @players = []
 
   emitChange: ->
     @emit 'change'
@@ -15,39 +15,27 @@ class PlayerManager extends EventEmitter
     @on 'change', callback
 
   setPlayerCoordinates: (id, coordinates) =>
-    @player = new Player null, coordinates
-    @emitChange()
-
-  addOtherPlayer: (id, coords) =>
-    @others.push new Player(id, coords)
+    player = new Player id, coordinates
+    @player = player unless @player
+    @players.push player
     @emitChange()
 
   removePlayer: (id) =>
-    @others = @others.filter (other) ->
+    @players = @players.filter (other) ->
       other.id isnt id
-    @emitChange()
-
-  addOtherPlayers: (players) =>
-    players = players.map (data) =>
-      return new Player(data.id, data.coordinates)
-    @others = @others.concat players
     @emitChange()
 
   getPlayer: ->
     @player
 
   getOtherPlayers: ->
-    @others
+    @players
 
   invokeOnDispatch: (payload) =>
     if payload.messageType is 'ADD_PLAYER'
       @setPlayerCoordinates payload.id, payload.coordinates
-    if payload.messageType is 'ADD_OTHER_PLAYER'
-      @addOtherPlayer payload.id, payload.coordinates
     if payload.messageType is 'REMOVE_PLAYER'
       @removePlayer payload.id
-    if payload.messageType is 'ADD_OTHER_PLAYERS'
-      @addOtherPlayers payload.players
     if payload.messageType is 'MOVE_PLAYER'
       @player.setCoordinates payload.coordinates
 

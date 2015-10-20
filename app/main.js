@@ -11,18 +11,10 @@ document.addEventListener('DOMContentLoaded', function() {
   var player;
   var canvas = graphicsManager.getCanvas();
 
-  socket.emit('client:getCoordinates');
+  socket.emit('join');
 
-  socket.on('server:setCoordinates', function(data) {
+  socket.on('new player', function(data) {
     PlayerActions.addPlayer(data.id, data.coordinates);
-  });
-
-  socket.on('server:new', function(data) {
-    PlayerActions.addOtherPlayer(data.id, data.coordinates);
-  });
-
-  socket.on('server:clients', function(clientsData) {
-    PlayerActions.addOtherPlayers(clientsData);
   });
 
   socket.on('server:disconnected', function(id) {

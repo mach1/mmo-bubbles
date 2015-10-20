@@ -29,21 +29,18 @@ io.on 'connection', (socket) ->
   client = new Client(socket)
   clients.push client
 
-  socket.on 'client:getCoordinates', ->
+  socket.on 'join', ->
     client.setCoordinates(Math.random() * 500, Math.random() * 500)
-    socket.emit 'server:setCoordinates',
+    socket.emit 'new player',
       coordinates: client.getCoordinates()
       id: client.id
 
-    clients.forEach (other) ->
-      other.socket.emit 'server:new', client.getData() unless other is client
+    socket.broadcast.emit 'new player',
+      coordinates: client.getCoordinates()
+      id: client.id
 
     otherClients = clients.filter (other) ->
-      other isnt client
-    .map (other) ->
-      other.getData()
-
-    socket.emit 'server:clients', otherClients
+      socket.emit 'new player', other.getData() unless other is client
 
   socket.on 'client:animate', (coordinates) ->
     client.setCoordinates coordinates.top, coordinates.left
